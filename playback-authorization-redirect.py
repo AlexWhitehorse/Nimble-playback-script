@@ -47,6 +47,7 @@ class HTTPHandler(server.BaseHTTPRequestHandler):
     __not_found = "<body>Not found</body>"
 
     def do_POST(self):
+        timeout = 1
         body = None
         content_length = self.__find_http_header(self.headers, 'Content-Length')
 
@@ -86,6 +87,11 @@ class HTTPHandler(server.BaseHTTPRequestHandler):
                 self.__send_headers(400)
         else:
             self.__send_headers(404, self.__not_found)
+
+    # Get handler
+    def do_GET(self):
+        self.send_response(400)
+        self.end_headers()
 
 
     # Нахождение заголовка зароса
