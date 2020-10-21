@@ -28,7 +28,10 @@ class IPv4_ip():
         return range_ip
 
     def is_in_range(self, input_ip):
-        int_ip = int(ipaddress.ip_address(input_ip))
+        try:
+            int_ip = int(ipaddress.ip_address(input_ip))
+        except ValueError:
+            return False
 
         if int_ip in self.ipRange_int:
             return True

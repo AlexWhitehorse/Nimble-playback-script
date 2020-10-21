@@ -2,32 +2,9 @@
 
 import socketserver 
 import json
+from config import *
 from http import server
 from Ip_addresses import IPv4_ip
-
-# IP и Порт сервера
-ADDR_THIS_SERVER = '141.105.134.199'
-PORT_THIS_SERVER = 8008
-
-# Группы пользователей для которых
-# не будет редиректа
-ALLOWED_USER_AGENT = [
-    "allow_group"
-]
-
-WHITE_LIST_IP = [
-    '89.160.200.111',       #   AA home
-    '192.168.111.0/24',     #   internal IP Kvant
-    '10.10.0.0/16',         #   Local IP Kvant
-    '10.4.0.0/16',          #   
-    '192.168.2.0/24',       #   
-    '78.26.204.85',         #   MS home
-    '195.189.196.0/23',     #   Real IP Kvant
-    '91.202.108.137'        #   Alex home
-]
-
-# Аддресс потока, на который будут перенаправление
-REDIRECT_LOCATION = 'https://cdn.kvant.mk.ua/kvanttv/kvant-err/playlist.m3u8'
 
 def makeWhiteList_ip_objects():
     WL = []
@@ -38,16 +15,15 @@ def makeWhiteList_ip_objects():
 
 WHITE_LIST = makeWhiteList_ip_objects()
 ANSW_OK = '{"return_code": 200}'
-DEBUG = True
 # Example of json request
 # {"host":"<host>", "url": "<stream URL>", "ip": "<client IP>", "user-agent": "allow_group", "referer": "< Заголовок Referer  >", "session_id": "<идентификатор сеанса Nimble>", "session_type": "<имя протокола>"}
 
 
 class HTTPHandler(server.BaseHTTPRequestHandler):
+    timeout = 2
     __not_found = "<body>Not found</body>"
 
     def do_POST(self):
-        timeout = 1
         body = None
         content_length = self.__find_http_header(self.headers, 'Content-Length')
 
@@ -71,15 +47,14 @@ class HTTPHandler(server.BaseHTTPRequestHandler):
                 if(group_user and user_agent):
                     self.__accept_user()
                     
-                # Если пользователь есть в белом списке IP
+                # Если пользователь есть в белом списке IP      
                 elif self.__compare_ip(user_ip, WHITE_LIST):
                     print('User accepted')
                     self.__accept_user()
 
-
-
                 elif(not group_user):
                     self.__deny_user_redirect(host, stream_url, REDIRECT_LOCATION)
+
                 # else:
                 #     self.__deny_user_redirect(host, stream_url, REDIRECT_LOCATION)
 
@@ -91,6 +66,8 @@ class HTTPHandler(server.BaseHTTPRequestHandler):
     # Get handler
     def do_GET(self):
         self.send_response(400)
+        self.send_header('Content-Length', '0')
+        self.send_header('Connection', 'close')
         self.end_headers()
 
 
@@ -174,18 +151,29 @@ class HTTPHandler(server.BaseHTTPRequestHandler):
         if DEBUG:
             print(message)
 
+def run_server():
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.TCPServer((ADDR_THIS_SERVER, PORT_THIS_SERVER), HTTPHandler, True)
+
+    try:
+        print('Server started at', ADDR_THIS_SERVER + ':' + str(PORT_THIS_SERVER))
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.socket.close()
+
         
 
+# debug
+if __name__ == "__main__":
+    socketserver.TCPServer.allow_reuse_address = True
+    httpd = socketserver.TCPServer((ADDR_THIS_SERVER, PORT_THIS_SERVER), HTTPHandler, True)
 
-socketserver.TCPServer.allow_reuse_address = True
-httpd = socketserver.TCPServer((ADDR_THIS_SERVER, PORT_THIS_SERVER), HTTPHandler, True)
-
-try:
-    print('Server started at', ADDR_THIS_SERVER + ':' + str(PORT_THIS_SERVER))
-    httpd.serve_forever()
-except KeyboardInterrupt:
-    pass
-finally:
-    httpd.socket.close()
-
-# print(WHITE_LIST)
+    try:
+        print('Server started at', ADDR_THIS_SERVER + ':' + str(PORT_THIS_SERVER))
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.socket.close()
