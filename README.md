@@ -13,13 +13,13 @@ Nimble playback script for redirect users based on black list.
 # Configuration
 ./Nimble-playback-script/`config.py`
 
-### IP and port of server
+### Server IP/port
 ```python
 ADDR_THIS_SERVER = 'localhost'
 PORT_THIS_SERVER = 8008
 ```
 
-### User agents
+### Allowed user agents
 ```python
 ALLOWED_USER_AGENT = [
     "allow_group",
@@ -27,7 +27,7 @@ ALLOWED_USER_AGENT = [
 ]
 ```
 
-### List of IPs/Subnetworks users
+### Allowed list of IPs/Subnetworks users
 ```python
 WHITE_LIST_IP = [
     'XX.XX.XX.XX', 
