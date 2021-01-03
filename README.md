@@ -45,3 +45,5 @@ REDIRECT_LOCATION = 'https://cdn.kvant.mk.ua/kvanttv/kvant-err/playlist.m3u8'
 ```cmd
 pyhon3 main.py
 ```
+
+*While adding IP or user need to restart program.*
