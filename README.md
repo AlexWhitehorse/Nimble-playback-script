@@ -14,13 +14,13 @@ Nimble playback script for redirect users based on black list.
 ./Nimble-playback-script/`config.py`
 
 ### IP and port of server
-```
+```python
 ADDR_THIS_SERVER = 'localhost'
 PORT_THIS_SERVER = 8008
 ```
 
 ### User agents
-```
+```python
 ALLOWED_USER_AGENT = [
     "allow_group",
     "Some group"
@@ -28,7 +28,7 @@ ALLOWED_USER_AGENT = [
 ```
 
 ### List of IPs/Subnetworks users
-```
+```python
 WHITE_LIST_IP = [
     'XX.XX.XX.XX', 
     'XX.XX.XX.XX/24'
@@ -36,6 +36,12 @@ WHITE_LIST_IP = [
 ```
 
 ### Stream URL fo redorection user
-```
+```python
 REDIRECT_LOCATION = 'https://cdn.kvant.mk.ua/kvanttv/kvant-err/playlist.m3u8'
+```
+
+
+# Runing
+```cmd
+pyhon3 main.py
 ```
